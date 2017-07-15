@@ -1,5 +1,5 @@
 # File-System-Simulator
-This program emulates a simple file system.  It came about as the Final Project for the Operating systems class at the Univeristy of Wyoming taught by Jim Ward.  It is written for Linux based operating Systems.  In order to play around with it simply download the files and run the makefile, this will run all of the drivers sequentially.  when it is done simply open the DISK file that the program creates, using your favorite hex viewer and think about how cool your computer is.
+This program emulates a simple file system.  It came about as the Final Project for the Operating systems class at the Univeristy of Wyoming taught by Jim Ward.  It is written for Linux based operating Systems.  In order to play around with it simply download the files and run the makefile, this will run all of the drivers sequentially.  when it is done simply open the DISK file that the program creates, using your favorite hex viewer and think about how cool your computer is.  Any Questions/Comments/Concerns/Bugs/Rants/Praise/Insults/etc. feel free to email me!
 
 **Warning: This was written to be able to work on very old Scientific Linux Systems it will work on any Linux based machine but it currently has issues on Mac, have not tested on Ubuntu and the like yet (I'll fix the Mac issues soon).**
 
