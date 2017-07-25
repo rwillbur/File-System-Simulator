@@ -65,8 +65,9 @@ This program emulates a simple file system.  It came about as the Final Project 
    **- An empty line followed by 0000 is an empty directory**
    #
    **- The dots '..' in general (provided they are not the bitVector which is always the second block in a FileSystem, 
-           the  PartitionBlock [i.e. superblock being the first]) stand for null characters, the block numbers span from 
-           single to 4 digits so the space in memory (in an inode) for each block number is 4 bytes long.**
+           the  PartitionBlock [i.e. superblock, being the first]) stand for null characters, the block numbers span from 
+           single to 4 digits so the space in memory (in an inode) for each block number is 4 bytes long naturally when 
+           a block number is less than 4 bytes the remaining spaces a null, thus the dots.**
    #
    
    
