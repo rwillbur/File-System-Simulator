@@ -1139,8 +1139,8 @@ int FileSystem::renameFile(char *filename1, int fnameLen1, char *filename2, int 
 }
 
 // Get the attributes of a file whose name is pointed to by filename.
-// *Work out the details of these operations based on the file attributes
-// you choose. You must choose a minimum of two attributes for your filesystem.*
+// attributes are file extension and creation date/time
+// creation date/time is set when the file is created and does not setAttribute() function
 // returns null if fail for any reason
 string FileSystem::getAttribute(char *filename, int fnameLen)
 {
@@ -1185,8 +1185,7 @@ string FileSystem::getAttribute(char *filename, int fnameLen)
 }
 
 // Set the attributes of a file whose name is pointed to by filename.
-// *Work out the details of these operations based on the file attributes
-// you choose. You must choose a minimum of two attributes for your filesystem.*
+// in this case all it does is set the file extension to whatever the user wants
 // -1 if filename not valid
 // -2 if file does not exist
 // -3 if file is a directory
