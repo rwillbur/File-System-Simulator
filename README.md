@@ -3,7 +3,7 @@ This program emulates a simple file system.  It came about as the Final Project 
 
 **Warning: This was written to be able to work on very old Scientific Linux Systems it will work on any Linux based machine but it currently has issues on Mac, have not tested on Ubuntu and the like yet (I'll fix the Mac issues soon).**
 
-**NOTE:  You will need a Hexviewer to read the DISK file (I have provided an example of what the DISK should look like after you open using a hexViewer at the bottom of this READ-ME as well as so tips for how to read it)**
+**NOTE:  You will need a Hexviewer to read the DISK file (I have provided an example of what the DISK should look like after you open it using a hexViewer at the bottom of this READ-ME as well as so tips for how to read it)**
 
 ## **Update: Mac issues should be solved**
 #
