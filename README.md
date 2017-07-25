@@ -13,7 +13,7 @@ This program emulates a simple file system.  It came about as the Final Project 
   
   **disk.h & disk.cpp:**  These two files are in charge of creating the DISK file (the emulation of a hard disk) they also handle reading and writing from/to the disk.
   
-  **diskmanager.h & diskmanager.cpp:**  These two files make up the DiskManager class.  The DiskManager is in charge of reading and writing from/to the disk just as the disk class is however the DiskManager must keep track of which partition the client is writing to.  The DiskManager makes use of the Disk class in order to read/write but it just offsets the the block number from which to start reading and writing based on which partition the block resides in.  It is also in charge to reading the SuperBlock in order to figure out if it needs to create a new set of partitions or if a definitions for partitions already exist. If they do then it simple uses the existing definitions.
+  **diskmanager.h & diskmanager.cpp:**  These two files make up the DiskManager class.  The DiskManager is in charge of reading and writing from/to the disk just as the disk class is however the DiskManager must keep track of which partition the client is writing to.  The DiskManager makes use of the Disk class in order to read/write but it offsets the the block number from which it starts reading and writing based on which partition the block resides in.  It is also in charge to reading the SuperBlock in order to figure out if it needs to create a new set of partitions or if a definitions for partitions already exist. If they do then it simply uses the existing definitions.
   
   **DiskManagerHelper.h:**  These are just a bunch of helper functions that the DiskManager class makes use of.
   
