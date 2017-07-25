@@ -70,6 +70,10 @@ This program emulates a simple file system.  It came about as the Final Project 
            the  PartitionBlock [i.e. superblock being the first]) stand for null characters, the block numbers span from 
            single to 4 digits so the space in memory (in an inode) for each block number is 4 bytes long.**
    #
+   
+   
+## DISK File:
+####      (Note that this is after having opened it with a hex editor)
 
 As1   e100 Bs101 e175 Cs176 e280 ccccccccccccccccccccccccccccccc
 ................cccccccccccccccccccccccccccccccccccccccccccccccc
