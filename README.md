@@ -6,11 +6,10 @@ This program emulates a simple file system.  It came about as the Final Project 
 **NOTE:  You will need a Hexviewer to read the DISK file**
 
 ## **Update: Mac issues should be solved**
-.
-.
-.
-.
-.
+[]
+[]
+[]
+[]
 ## File Breakdown
   
   **bitVector.h & bitVector.cpp:** These two files implement a Bit Vector class which is used to keep track of blocks on the DISK that have been allocated (or deallocated as the case may be).
