@@ -39,7 +39,7 @@ This program emulates a simple file system.  It came about as the Final Project 
   **drivers 1-6:**  Drivers 1 - 6 are in charge of testing the FileSystem class.  Driver1 tests basic functionality such as write/read/open/close etc. for a single client (i.e. single partition), Driver2 does the same but for multi-partition, Driver3 tests the same things as Driver1 but it throws in directories, Driver4 tests the same things as Driver3 but for multiple partitions, Driver5 tests edge cases (incidentally this is were the program fails a few tests on Macs NOW FIXED), Driver6 tests "added functionality" wich in this case is the set and get attributes function.
   #
   
-  ## Below is an example of what the DISK file should look like after running drivers 1-5
+  ## Below is an example of what the DISK file should look like after running drivers 1-6
    **- 'c' stands for "empty"/"clear"**
    #
    **- 'A/B/C/etc' are the partitions**
