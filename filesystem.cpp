@@ -451,10 +451,10 @@ int FileSystem::openFile(char *filename, int fnameLen, char mode, int lockId)
 			if(dAdress.size() > 0)
 			{
 				fileTable[i].rwpointer.first = dAdress[0];
-        fileTable[i].rwpointer.second = 0;
-      }
-    }
-  }
+        			fileTable[i].rwpointer.second = 0;
+      			}
+    		}
+  	}
   return desc;
 }
 
