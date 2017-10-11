@@ -46,62 +46,62 @@ int FileSystem::createFile(char *filename, int fnameLen)
 	char continueAdrs[4]; // address at end of directory which signals were the directory continues if block is full
 	int pointer = 0;  // integer version of continueAdrs
 	int directoryBlock =  travelDirectories(filename, fnameLen); //home directory
-  int temp = 0; // for error checks
+  	int temp = 0; // for error checks
 	clean(directoryBlock); // clean up a trailing directory
 
-  /*  check if directory continues. If it does revise the directoryBlk accordingly  */
-  if((myPM->readDiskBlock(directoryBlock, currentDir)) < 0){return -4;} // read data
-  int n = 0;
-  for(int i = 60; i < 64; i++){continueAdrs[n] = currentDir[i]; n++;}
-  pointer = CharToInt2(continueAdrs);
-  if(pointer != 0 && isFullBlk(currentDir)){directoryBlock = pointer;}
-  if((myPM->readDiskBlock(directoryBlock, currentDir)) < 0){return -4;} // read data
+  	/*  check if directory continues. If it does revise the directoryBlk accordingly  */
+  	if((myPM->readDiskBlock(directoryBlock, currentDir)) < 0){return -4;} // read data
+  	int n = 0;
+  	for(int i = 60; i < 64; i++){continueAdrs[n] = currentDir[i]; n++;}
+  	pointer = CharToInt2(continueAdrs);
+  	if(pointer != 0 && isFullBlk(currentDir)){directoryBlock = pointer;}
+  	if((myPM->readDiskBlock(directoryBlock, currentDir)) < 0){return -4;} // read data
 
 
-  /*  Check if file name already exists.
-   *  If it does then:
-   *  A: if it's a directory return -4
-   *  B: if it's a file return -1
-   */
-  if((temp = myPM->findFile(fname, directoryBlock)) > 0)
-  {
-    char temp2[64];
-    myPM->readDiskBlock(temp, temp2);
-    int inodeL = getLocation(temp2, fname);
-    myPM->readDiskBlock(inodeL, temp2);
-    if(isFile(temp2)){return -1;}
-    else{return -4;}
-  } 
+  	/*  Check if file name already exists.
+  	 *  If it does then:
+  	 *  A: if it's a directory return -4
+  	 *  B: if it's a file return -1
+  	 */
+  	if((temp = myPM->findFile(fname, directoryBlock)) > 0)
+  	{
+  	  char temp2[64];
+  	  myPM->readDiskBlock(temp, temp2);
+  	  int inodeL = getLocation(temp2, fname);
+  	  myPM->readDiskBlock(inodeL, temp2);
+  	  if(isFile(temp2)){return -1;}
+  	  else{return -4;}
+  	} 
 
-  /*  If the current directory is NOT full simply write to it  */
-  if(!isFullBlk(currentDir))
-  {
-    int location; // location of new fileInode
-    if((location = writeFileEntry(directoryBlock, fname)) < 0){return -4;} //write the new file entry
-    if(writeFileInode(location, fname) < 0){return -4;} // write the new file inode
-  }
-  else
-  {
-    /*  The directory block you are trying to write to is full:
-     *  1. Create a new "fresh" directory at the next open space you can find
-     *  2. Set the current directories "continuation of dir" pointer (i.e. last 4 bytes) to the new blknum you got from step 1
-     *  3. Write the file to the new directory
-     */
-    char* free = new char[4];
-    int newDir = myPM->getFreeDiskBlock(); if(location < 0){return -2;} newDir += 1;
-    int k = 0;
-    free = IntToChar2(newDir);
-    for(int i = 60; i < 64; i++){currentDir[i] = free[k]; k++;}
-    if(myPM->writeDiskBlock(directoryBlock, currentDir) < 0){return -4;}
-    if(myPM->initDirectory(newDir) < 0){return -4;}
+  	/*  If the current directory is NOT full simply write to it  */
+  	if(!isFullBlk(currentDir))
+  	{
+  	  int location; // location of new fileInode
+  	  if((location = writeFileEntry(directoryBlock, fname)) < 0){return -4;} //write the new file entry
+  	  if(writeFileInode(location, fname) < 0){return -4;} // write the new file inode
+  	}
+  	else
+  	{
+  	  /*  The directory block you are trying to write to is full:
+  	   *  1. Create a new "fresh" directory at the next open space you can find
+  	   *  2. Set the current directories "continuation of dir" pointer (i.e. last 4 bytes) to the new blknum you got from step 1
+  	   *  3. Write the file to the new directory
+  	   */
+  	  char* free = new char[4];
+  	  int newDir = myPM->getFreeDiskBlock(); if(location < 0){return -2;} newDir += 1;
+  	  int k = 0;
+  	  free = IntToChar2(newDir);
+  	  for(int i = 60; i < 64; i++){currentDir[i] = free[k]; k++;}
+  	  if(myPM->writeDiskBlock(directoryBlock, currentDir) < 0){return -4;}
+  	  if(myPM->initDirectory(newDir) < 0){return -4;}
 
-    /*  write file  */
-    int location;
-    if((location = writeFileEntry(newDir, fname)) < 0){return -4;} //write the new file entry
-    if(writeFileInode(location, fname) < 0){return -4;} // write the new file inode
+    	/*  write file  */
+    	int location;
+    	if((location = writeFileEntry(newDir, fname)) < 0){return -4;} //write the new file entry
+    	if(writeFileInode(location, fname) < 0){return -4;} // write the new file inode
 
-  }
-  return 0;
+  	}
+  	return 0;
 }
 
 // This operation creates a new directory whose name is pointed to by dirname.
@@ -115,7 +115,7 @@ int FileSystem::createDirectory(char *dirname, int dnameLen)
 {
 	/*  initial data integrity checks  */
 	if(dirname == NULL || dnameLen <= 0){return -4;} // check that data passed is good
-  if(!nameCheck(dirname, dnameLen)){return -3;}
+  	if(!nameCheck(dirname, dnameLen)){return -3;}
 
 
 	/*  variables  */
@@ -124,65 +124,65 @@ int FileSystem::createDirectory(char *dirname, int dnameLen)
 	char currentDir[64]; // current directory data
 	char continueAdrs[4]; // address at end of directory which signals were the directory continues if block is full
 	int pointer;  // integer version of continueAdrs
-  int temp; // used for error checks
+  	int temp; // used for error checks
 	int directoryBlock = travelDirectories(dirname, dnameLen); //home direc
 	clean(directoryBlock); // clean up trailing directory
 
 
-  /*  check if directory continues. If it does revise the directoryBlk accordingly  */
-  if((myPM->readDiskBlock(directoryBlock, currentDir)) < 0){return -4;} // read data
-  int n = 0;
-  for(int i = 60; i < 64; i++){continueAdrs[n] = currentDir[i]; n++;}
-  pointer = CharToInt2(continueAdrs);
-  if(pointer != 0 && isFullBlk(currentDir)){directoryBlock = pointer;}
-  if((myPM->readDiskBlock(directoryBlock, currentDir)) < 0){return -4;} // read data
+  	/*  check if directory continues. If it does revise the directoryBlk accordingly  */
+  	if((myPM->readDiskBlock(directoryBlock, currentDir)) < 0){return -4;} // read data
+  	int n = 0;
+  	for(int i = 60; i < 64; i++){continueAdrs[n] = currentDir[i]; n++;}
+  	pointer = CharToInt2(continueAdrs);
+  	if(pointer != 0 && isFullBlk(currentDir)){directoryBlock = pointer;}
+  	if((myPM->readDiskBlock(directoryBlock, currentDir)) < 0){return -4;} // read data
 
 
-  /*  Check if file name already exists.
-   *  If it does then:
-   *  A: if it's a directory return -4
-   *  B: if it's a file return -1
-   */
-  if((temp = myPM->findFile(dname, directoryBlock)) > 0)
-  {
-    char temp2[64];
-    myPM->readDiskBlock(temp, temp2);
-    int inodeL = getLocation(temp2, dname);
-    myPM->readDiskBlock(inodeL, temp2);
-    if(!isFile(temp2)){return -1;}
-    else{return -4;}
-  } 
+  	/*  Check if file name already exists.
+  	 *  If it does then:
+  	 *  A: if it's a directory return -4
+  	 *  B: if it's a file return -1
+  	 */
+  	if((temp = myPM->findFile(dname, directoryBlock)) > 0)
+  	{
+  	  char temp2[64];
+  	  myPM->readDiskBlock(temp, temp2);
+  	  int inodeL = getLocation(temp2, dname);
+  	  myPM->readDiskBlock(inodeL, temp2);
+  	  if(!isFile(temp2)){return -1;}
+  	  else{return -4;}
+  	} 
 
-  /*  If the current directory is NOT full simply write to it  */
-  if(!isFullBlk(currentDir))
-  {
-    int location;
-    if((location = writeDirectoryEntry(directoryBlock, dname)) < 0){return -4;} //write the new file entry
-    myPM->initDirectory(location);
-  }
-  else
-  {
-    /*  The directory block you are trying to write to is full:
-     *  1. Create a new "fresh" directory at the next open space you can find
-     *  2. Set the current directory's "continuation of dir" pointer (i.e. last 4 bytes) ,
-     *     to the new blknum you got from step 1
-     *  3. Write new directory to disk
-     */
-    char* free = new char[4];
-    int newDir = myPM->getFreeDiskBlock(); if(location < 0){return -2;} newDir += 1;
-    int k = 0;
-    free = IntToChar2(newDir);
-    for(int i = 60; i < 64; i++){currentDir[i] = free[k]; k++;}
-    if(myPM->writeDiskBlock(directoryBlock, currentDir) < 0){return -4;}
-    if(myPM->initDirectory(newDir) < 0){return -4;}
+  	/*  If the current directory is NOT full simply write to it  */
+  	if(!isFullBlk(currentDir))
+  	{
+  	  int location;
+  	  if((location = writeDirectoryEntry(directoryBlock, dname)) < 0){return -4;} //write the new file entry
+  	  myPM->initDirectory(location);
+  	}
+  	else
+  	{
+  	  /*  The directory block you are trying to write to is full:
+  	   *  1. Create a new "fresh" directory at the next open space you can find
+  	   *  2. Set the current directory's "continuation of dir" pointer (i.e. last 4 bytes) ,
+  	   *     to the new blknum you got from step 1
+  	   *  3. Write new directory to disk
+  	   */
+  	  char* free = new char[4];
+  	  int newDir = myPM->getFreeDiskBlock(); if(location < 0){return -2;} newDir += 1;
+  	  int k = 0;
+  	  free = IntToChar2(newDir);
+  	  for(int i = 60; i < 64; i++){currentDir[i] = free[k]; k++;}
+  	  if(myPM->writeDiskBlock(directoryBlock, currentDir) < 0){return -4;}
+  	  if(myPM->initDirectory(newDir) < 0){return -4;}
 
-    /*  write directory to disk  */
-    int location;
-    if((location = writeDirectoryEntry(newDir, dname)) < 0){return -4;} //write the new file entry
-    if(myPM->initDirectory(location) < 0){return -4;}
+    	/*  write directory to disk  */
+    	int location;
+    	if((location = writeDirectoryEntry(newDir, dname)) < 0){return -4;} //write the new file entry
+    	if(myPM->initDirectory(location) < 0){return -4;}
 
-  }
-  return 0;
+  	}
+  	return 0;
 }
 
 // This operation locks a file.
@@ -208,8 +208,8 @@ int FileSystem::lockFile(char *filename, int fnameLen)
 	Node* n = getNode(filename); // filetable entry Node
 	int directoryLoc = travelDirectories(filename, fnameLen); // home dir 
 
-  // get blknum where file is (in case directory extends beyond 1 blk)
-  directoryLoc = myPM->findFile(fname, directoryLoc); 
+  	// get blknum where file is (in case directory extends beyond 1 blk)
+  	directoryLoc = myPM->findFile(fname, directoryLoc); 
 
 	/*  error checks  */
 	if(myPM->findFile(fname, directoryLoc) <= 0){return -2;}  // find if file exists
@@ -276,9 +276,9 @@ int FileSystem::deleteFile(char *filename, int fnameLen)
 
 	/*  traverse directories  */
 	int dirBlockNum = travelDirectories(filename, fnameLen);
-  dirBlockNum = myPM->findFile(fname, dirBlockNum);
-  clean(dirBlockNum);
-  if(dirBlockNum <= 0){return -1;}
+  	dirBlockNum = myPM->findFile(fname, dirBlockNum);
+  	clean(dirBlockNum);
+  	if(dirBlockNum <= 0){return -1;}
 
 	/*  error checks  */
 	if(n != nullptr && n->isOpen){return -2;}
@@ -291,10 +291,10 @@ int FileSystem::deleteFile(char *filename, int fnameLen)
 	if(myPM->readDiskBlock(fInodeLoc, fInode) < 0){return -3;} // get file Inode
 	if(!isFile(fInode)){return -3;} // if file isnot a file but a directry return
 
-  // get all 3 direct addresses as well as the single indirect address
+  	// get all 3 direct addresses as well as the single indirect address
 	directAdrss = getDataLoc(fInode); 
 
-  // if the indirect address is NOT '0' (i.e. the indirect address exists) see getDataLoc() def
+  	// if the indirect address is NOT '0' (i.e. the indirect address exists) see getDataLoc() def
 	if(directAdrss.size() == 4)
 	{
 		indirectLoc = directAdrss[3]; // get address of indirect block
@@ -303,34 +303,34 @@ int FileSystem::deleteFile(char *filename, int fnameLen)
 	}
 
 
-  /*  delete data  */
-  if(indirectAdrss.size() > 0) //if the indirect block has data 
-  {
-    for(uint i = 0; i < indirectAdrss.size(); i++)
-    {
-      char temp[64];
-      clearBlock(temp); // clear block (i.e. write all 'c')
-      if(myPM->writeDiskBlock(indirectAdrss[i], temp) < 0){return -3;} //update disk with cleared block
-      if(myPM->returnDiskBlock(indirectAdrss[i]-1) < 0){return -3;} // update bitVector to show this block as open
-    }
-  }
-	if(directAdrss.size() > 0) //if the file has data somewhere
-	{
-		for(uint i = 0; i < directAdrss.size(); i++)
+  	/*  delete data  */
+  	if(indirectAdrss.size() > 0) //if the indirect block has data 
+  	{
+  	  for(uint i = 0; i < indirectAdrss.size(); i++)
+  	  {
+  	    char temp[64];
+  	    clearBlock(temp); // clear block (i.e. write all 'c')
+  	    if(myPM->writeDiskBlock(indirectAdrss[i], temp) < 0){return -3;} //update disk with cleared block
+  	    if(myPM->returnDiskBlock(indirectAdrss[i]-1) < 0){return -3;} // update bitVector to show this block as open
+  	  }
+  	}
+		if(directAdrss.size() > 0) //if the file has data somewhere
 		{
-			char temp[64];
-			clearBlock(temp); // clear block (i.e. write all 'c')
-			if(myPM->writeDiskBlock(directAdrss[i], temp) < 0){return -3;} //update disk with cleared block
-			if(myPM->returnDiskBlock(directAdrss[i]-1) < 0){return -3;} // update bitVector to show this block as open
+			for(uint i = 0; i < directAdrss.size(); i++)
+			{
+				char temp[64];
+				clearBlock(temp); // clear block (i.e. write all 'c')
+				if(myPM->writeDiskBlock(directAdrss[i], temp) < 0){return -3;} //update disk with cleared block
+				if(myPM->returnDiskBlock(directAdrss[i]-1) < 0){return -3;} // update bitVector to show this block as open
+			}
 		}
-	}
 
-  /*  delete the file Inode and the file's directory entry  */
-  clearBlock(fInode); // clear file Inode
-  if(myPM->writeDiskBlock(fInodeLoc, fInode) < 0){return -3;} // update disk with new fileInode
-  if(myPM->returnDiskBlock(fInodeLoc-1) < 0){return -3;} // set bitVector at file Inode location to 0 (i.e. open)
-  deleteEntry(dirInode, fname); // delete target file's entry from current directory
-  if(myPM->writeDiskBlock(dirBlockNum, dirInode) < 0){return -3;} // write updated directory to disk
+  	/*  delete the file Inode and the file's directory entry  */
+  	clearBlock(fInode); // clear file Inode
+  	if(myPM->writeDiskBlock(fInodeLoc, fInode) < 0){return -3;} // update disk with new fileInode
+  	if(myPM->returnDiskBlock(fInodeLoc-1) < 0){return -3;} // set bitVector at file Inode location to 0 (i.e. open)
+  	deleteEntry(dirInode, fname); // delete target file's entry from current directory
+  	if(myPM->writeDiskBlock(dirBlockNum, dirInode) < 0){return -3;} // write updated directory to disk
 	return 0;
 }
 
@@ -355,9 +355,9 @@ int FileSystem::deleteDirectory(char *dirname, int dnameLen)
 
 	/* traverse directories  */
 	int homeDirBlockNum = travelDirectories(dirname, dnameLen);
-  homeDirBlockNum = myPM->findFile(dname, homeDirBlockNum);
-  clean(homeDirBlockNum);
-  if(homeDirBlockNum <= 0){return -1;}
+  	homeDirBlockNum = myPM->findFile(dname, homeDirBlockNum);
+  	clean(homeDirBlockNum);
+  	if(homeDirBlockNum <= 0){return -1;}
 
 	if(myPM->readDiskBlock(homeDirBlockNum, homeDirectoryInode) < 0){return -3;}
 	targetDirBlknm = getLocation(homeDirectoryInode, dname); // get target directory location
@@ -369,10 +369,10 @@ int FileSystem::deleteDirectory(char *dirname, int dnameLen)
 	/* check that directory does not continue to another block
 	 * a directory could easily have all of its files deleted in one location
 	 * but still have entries in another location (i.e. its continuation)
-   */
-  if(myPM->isEmptyDir(targetDirBlknm) == 1){return -2;}
+   	*/
+  	if(myPM->isEmptyDir(targetDirBlknm) == 1){return -2;}
 	
-  /*  delete directory inode and remove its entry from the home dir  */
+  	/*  delete directory inode and remove its entry from the home dir  */
 	clearBlock(targetDirInode); // clear the directory block (i.e. set every byte to 'c')
 	if(myPM->writeDiskBlock(targetDirBlknm, targetDirInode) < 0){return -3;} // write updated target directory to disk
 	if(myPM->returnDiskBlock(targetDirBlknm-1) < 0){return -3;} // reset bitVector value to '0' (free) at the target dir's location
@@ -470,7 +470,7 @@ int FileSystem::closeFile(int fileDesc)
 	{
 		if(fileTable[i].fdesc == fileDesc)
 		{
-      /*  erase the entry from the table  */
+      			/*  erase the entry from the table  */
 			fileTable.erase(fileTable.begin() + i);
 			return 0;
 		}
@@ -1094,15 +1094,15 @@ int FileSystem::seekFile(int fileDesc, int offset, int flag)
 int FileSystem::renameFile(char *filename1, int fnameLen1, char *filename2, int fnameLen2)
 {
 	/*  initial data integrity checks  */
-  if(filename1 == nullptr || filename2 == nullptr || fnameLen1 <=0 || fnameLen2 <= 0){return -5;}
-  if(!nameCheck(filename1, fnameLen1)){return -1;}
-  if(!nameCheck(filename2, fnameLen2)){return -1;}
+  	if(filename1 == nullptr || filename2 == nullptr || fnameLen1 <=0 || fnameLen2 <= 0){return -5;}
+  	if(!nameCheck(filename1, fnameLen1)){return -1;}
+  	if(!nameCheck(filename2, fnameLen2)){return -1;}
 
 	/*  variables  */
 	char fname1 = filename1[fnameLen1-1]; // old file name
 	char fname2 = filename2[fnameLen2-1]; // new file name
 	int dirBlknum = travelDirectories(filename1, fnameLen1);
-  dirBlknum = myPM->findFile(fname1, dirBlknum);
+  	dirBlknum = myPM->findFile(fname1, dirBlknum);
 	Node* n = getNode(filename1); // file table entry
 	Lock* l = getLock(filename1); // lock table entry
 	char directory[64];  // home directory data
@@ -1131,9 +1131,9 @@ int FileSystem::renameFile(char *filename1, int fnameLen1, char *filename2, int 
 	inode[0] = fname2; // change the first character of the file inode (i.e. filename)
 	if(myPM->writeDiskBlock(finode, inode) < 0){return -5;} // write updated file inode to disk
 
-  /*  need to change fileTable also  */
-  for(uint i = 0; i < fileTable.size(); i++)
-  { if(fileTable[i].name == filename1){fileTable[i].name = filename2;} }
+  	/*  need to change fileTable also  */
+  	for(uint i = 0; i < fileTable.size(); i++)
+  	{ if(fileTable[i].name == filename1){fileTable[i].name = filename2;} }
 
 	return 0;
 }
